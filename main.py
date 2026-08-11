@@ -1,5 +1,7 @@
 import tkinter as tk
 from PIL import Image, ImageTk
+from database import staff_collection
+import bcrypt
 
 # Create the main application window
 window = tk.Tk()
@@ -215,13 +217,33 @@ forgot_password.pack(
     pady=(0, 25)
 )
 
-
 def login():
     username = username_entry.get()
     password = password_entry.get()
 
-    print("Username:", username)
-    print("Password:", password)
+    user = staff_collection.find_one({"username": username})
+
+    if user is None:
+        print("Invalid username or password")
+        return
+
+    if bcrypt.checkpw(
+        password.encode("utf-8"),
+        user["password"]
+    ):
+        if user["role"] == "admin":
+            admin_dashboard()
+        else:
+            print("Invalid role")
+    else:
+        print("Invalid username or password")
+
+def admin_dashboard():
+    for item in window.winfo_children(): # window information
+        item.destroy() # Remove this item from the application
+
+    window.title("Ellisam Daycare - Admin Dashboard")
+    window.configure(bg="#FFFFFF")
 
 
 login_button = tk.Button(
