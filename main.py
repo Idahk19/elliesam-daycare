@@ -1,4 +1,5 @@
 import tkinter as tk
+from PIL import Image, ImageTk
 
 # Create the main application window
 window = tk.Tk()
@@ -18,6 +19,18 @@ left_frame = tk.Frame(
 
 left_frame.pack(side="left", fill="y") # put to the left and fill vertically
 left_frame.pack_propagate(False) # keep it at the specified width and length
+
+image = Image.open("daycare.jpg")
+image = image.resize((300, 200))
+photo = ImageTk.PhotoImage(image)
+
+image_label = tk.Label(
+    left_frame,
+    image=photo,
+    bg="#B9E3F5"
+)
+
+image_label.pack(pady=20)
 
 logo = tk.Label(
     left_frame,
