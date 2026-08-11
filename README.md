@@ -53,30 +53,30 @@ The caregiver can:
 
 ##  Installation
 1. Clone the repository
-´´´
+```
 git clone https://github.com/your-username/ellisam-daycare.git
-´´´
+```
 2. Navigate to the project directory
-´´´
+```
 cd ellisam-daycare
-´´´
+```
 3. Create a virtual environment´
-´´´
+```
 python -m venv venv
-´´´
+```
 4. Activate the virtual environment
 Windows:
-´´´
+```
 venv\Scripts\activate
-´´´
+```
 5. Install dependencies
-´´´
+```
 pip install -r requirements.txt
-´´´
+```
 6. Run the application
-´´´
+```
 python main.
-´´´
+```
 
 ## Future Improvements
 - Parent portal
