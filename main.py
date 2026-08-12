@@ -2,6 +2,7 @@ import tkinter as tk
 from PIL import Image, ImageTk
 from database import staff_collection
 import bcrypt
+from tkinter import messagebox
 
 # Create the main application window
 window = tk.Tk()
@@ -224,7 +225,10 @@ def login():
     user = staff_collection.find_one({"username": username})
 
     if user is None:
-        print("Invalid username or password")
+        messagebox.showerror(
+            "Login Failed",
+            "Invalid username or password."
+        )
         return
 
     if bcrypt.checkpw(
@@ -232,11 +236,21 @@ def login():
         user["password"]
     ):
         if user["role"] == "admin":
+            messagebox.showinfo(
+                "Login Successful",
+                "Welcome, Admin!"
+            )
             admin_dashboard()
         else:
-            print("Invalid role")
+            messagebox.showerror(
+                "Login Failed",
+                "Invalid role."
+            )
     else:
-        print("Invalid username or password")
+        messagebox.showerror(
+            "Login Failed",
+            "Invalid username or password."
+        )
 
 def admin_dashboard():
     for item in window.winfo_children(): # window information
