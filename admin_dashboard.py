@@ -1,4 +1,5 @@
 import tkinter as tk
+from children import children
 
 def admin_dashboard(window):
     for item in window.winfo_children():
@@ -69,7 +70,8 @@ def admin_dashboard(window):
         bd=0,
         anchor="w",
         padx=25,
-        cursor="hand2"
+        cursor="hand2",
+        command=lambda:children(main_area)
     )
 
     children_button.pack(
