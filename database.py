@@ -1,6 +1,6 @@
 from pymongo import MongoClient
-from dotenv import load_dotenv
-import os
+from dotenv import load_dotenv # use it read values on the .env
+import os # use it to retrieve MONGO_URI
 
 load_dotenv()
 
@@ -8,7 +8,7 @@ mongo_url = os.getenv("MONGO_URI")
 
 client = MongoClient(mongo_url)
 
-db = client["elliesam_daycare"]
+db = client["elliesam_daycare"] 
 
 staff_collection = db["staff"]
 

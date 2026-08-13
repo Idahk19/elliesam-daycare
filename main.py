@@ -3,6 +3,7 @@ from PIL import Image, ImageTk
 from database import staff_collection
 import bcrypt
 from tkinter import messagebox
+from admin_dashboard import admin_dashboard
 
 # Create the main application window
 window = tk.Tk()
@@ -240,7 +241,7 @@ def login():
                 "Login Successful",
                 "Welcome, Admin!"
             )
-            admin_dashboard()
+            admin_dashboard(window)
         else:
             messagebox.showerror(
                 "Login Failed",
@@ -251,14 +252,6 @@ def login():
             "Login Failed",
             "Invalid username or password."
         )
-
-def admin_dashboard():
-    for item in window.winfo_children(): # window information
-        item.destroy() # Remove this item from the application
-
-    window.title("Ellisam Daycare - Admin Dashboard")
-    window.configure(bg="#FFFFFF")
-
 
 login_button = tk.Button(
     right_frame,
