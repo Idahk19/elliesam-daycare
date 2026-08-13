@@ -7,6 +7,16 @@ def admin_dashboard(window):
 
     window.title("Ellisam Daycare - Admin Dashboard")
     window.configure(bg="#FFFFFF")
+    main_area = tk.Frame(
+    window,
+    bg="#FFFFFF"
+)
+
+    main_area.pack(
+    side="right",
+    fill="both",
+    expand=True
+)
 
     sidebar = tk.Frame(
         window,
@@ -61,24 +71,24 @@ def admin_dashboard(window):
     )
 
     children_button = tk.Button(
-        sidebar,
-        text="Children",
-        font=("Arial", 11),
-        bg="#B9E3F5",
-        fg="#294A5A",
-        relief="flat",
-        bd=0,
-        anchor="w",
-        padx=25,
-        cursor="hand2",
-        command=lambda:children(main_area)
-    )
+    sidebar,
+    text="Children",
+    font=("Arial", 11),
+    bg="#B9E3F5",
+    fg="#294A5A",
+    relief="flat",
+    bd=0,
+    anchor="w",
+    padx=25,
+    cursor="hand2",
+    command=lambda: children(main_area, window)
+)
 
     children_button.pack(
-        fill="x",
-        padx=15,
-        pady=5
-    )
+    fill="x",
+    padx=15,
+    pady=5
+)
 
     staff_button = tk.Button(
         sidebar,
