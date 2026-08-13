@@ -250,45 +250,96 @@ def admin_dashboard(window):
         padx=45
     )
     cards_frame = tk.Frame(
-       main_area,
-       bg="#FFFFFF"
+        main_area,
+        bg="#FFFFFF"
     )
+
     cards_frame.pack(
        fill="x",
        padx=45,
        pady=30
     )
+
     children_card = tk.Frame(
-        cards_frame,
-        bg="#6F8A96", 
-        width=150,
-        height=100,
+       cards_frame,
+       bg="#B9E3F5",
+       width=240,
+       height=120
     )
+
     children_card.grid(
-        row=0,
-        column=0
+       row=0,
+       column=0,
+       padx=10,
+       pady=10
     )
+
     children_card.grid_propagate(False)
 
     staff_card = tk.Frame(
-        cards_frame,
-        bg="#6F8A96", 
-        width=150,
-        height=100,
+       cards_frame,
+       bg="#B9E3F5",
+       width=240,
+       height=120
     )
+
     staff_card.grid(
-        row=0,
-        column=1
+       row=0,
+       column=1,
+       padx=10,
+       pady=10
     )
+
     staff_card.grid_propagate(False)
+
+
     todays_attendance = tk.Frame(
-        cards_frame,
-        bg="#6F8A96", 
-        width=150,
-        height=100,
+       cards_frame,
+       bg="#B9E3F5",
+       width=240,
+       height=120
     )
+
     todays_attendance.grid(
-        row=0,
-        column=2
+       row=0,
+       column=2,
+       padx=10,
+       pady=10
     )
+
     todays_attendance.grid_propagate(False)
+
+
+    todays_activity = tk.Frame(
+      cards_frame,
+      bg="#B9E3F5",
+      width=370,
+      height=180
+    )
+
+    todays_activity.grid(
+      row=1,
+      column=0,
+      columnspan=2,
+      padx=10,
+      pady=10
+    )
+
+    todays_activity.grid_propagate(False)
+
+
+    recent_payment = tk.Frame(
+      cards_frame,
+      bg="#B9E3F5",
+      width=240,
+      height=180
+    )
+
+    recent_payment.grid(
+      row=1,
+      column=2,
+      padx=10,
+      pady=10
+    )
+
+    recent_payment.grid_propagate(False)
