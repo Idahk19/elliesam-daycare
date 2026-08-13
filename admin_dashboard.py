@@ -249,4 +249,46 @@ def admin_dashboard(window):
         anchor="w",
         padx=45
     )
- 
+    cards_frame = tk.Frame(
+       main_area,
+       bg="#FFFFFF"
+    )
+    cards_frame.pack(
+       fill="x",
+       padx=45,
+       pady=30
+    )
+    children_card = tk.Frame(
+        cards_frame,
+        bg="#6F8A96", 
+        width=150,
+        height=100,
+    )
+    children_card.grid(
+        row=0,
+        column=0
+    )
+    children_card.grid_propagate(False)
+
+    staff_card = tk.Frame(
+        cards_frame,
+        bg="#6F8A96", 
+        width=150,
+        height=100,
+    )
+    staff_card.grid(
+        row=0,
+        column=1
+    )
+    staff_card.grid_propagate(False)
+    todays_attendance = tk.Frame(
+        cards_frame,
+        bg="#6F8A96", 
+        width=150,
+        height=100,
+    )
+    todays_attendance.grid(
+        row=0,
+        column=2
+    )
+    todays_attendance.grid_propagate(False)
