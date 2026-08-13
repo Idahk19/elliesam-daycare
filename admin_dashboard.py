@@ -147,63 +147,6 @@ def admin_dashboard(window):
         pady=5
     )
 
-    activities_button = tk.Button(
-        sidebar,
-        text="Activities",
-        font=("Arial", 11),
-        bg="#B9E3F5",
-        fg="#294A5A",
-        relief="flat",
-        bd=0,
-        anchor="w",
-        padx=25,
-        cursor="hand2"
-    )
-
-    activities_button.pack(
-        fill="x",
-        padx=15,
-        pady=5
-    )
-
-    reports_button = tk.Button(
-        sidebar,
-        text="Reports",
-        font=("Arial", 11),
-        bg="#B9E3F5",
-        fg="#294A5A",
-        relief="flat",
-        bd=0,
-        anchor="w",
-        padx=25,
-        cursor="hand2"
-    )
-
-    reports_button.pack(
-        fill="x",
-        padx=15,
-        pady=5
-    )
-
-    settings_button = tk.Button(
-        sidebar,
-        text="Settings",
-        font=("Arial", 11),
-        bg="#B9E3F5",
-        fg="#294A5A",
-        relief="flat",
-        bd=0,
-        anchor="w",
-        padx=25,
-        cursor="hand2"
-    )
-
-    settings_button.pack(
-        fill="x",
-        padx=15,
-        pady=5
-    )
-
     logout_button = tk.Button(
         sidebar,
         text="Logout",
