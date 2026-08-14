@@ -1,5 +1,6 @@
 import tkinter as tk
 from children import children
+from staff import staff
 
 def admin_dashboard(window):
     for item in window.winfo_children():
@@ -100,7 +101,8 @@ def admin_dashboard(window):
         bd=0,
         anchor="w",
         padx=25,
-        cursor="hand2"
+        cursor="hand2",
+        command=lambda: staff(main_area, window)
     )
 
     staff_button.pack(
