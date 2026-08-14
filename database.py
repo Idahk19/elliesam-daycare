@@ -11,6 +11,7 @@ client = MongoClient(mongo_url)
 db = client["elliesam_daycare"] 
 
 staff_collection = db["staff"]
+children_collection = db["children"]
 
 # testing
 try:
