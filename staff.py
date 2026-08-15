@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import ttk
 from tkinter import messagebox
 from database import staff_collection
+import bcrypt
 
 
 def staff(main_area, window):
@@ -103,6 +104,7 @@ def staff(main_area, window):
 
 
 def display_staff(staff_frame, main_area, window):
+
     for item in staff_frame.winfo_children():
         item.destroy()
 
@@ -228,7 +230,8 @@ def display_staff(staff_frame, main_area, window):
     staff_frame.grid_columnconfigure(1, weight=1)
     staff_frame.grid_columnconfigure(2, weight=2)
     staff_frame.grid_columnconfigure(3, weight=2)
-    
+
+
 def add_staff(window, main_area):
 
     add_window = tk.Toplevel(window)
@@ -244,12 +247,14 @@ def add_staff(window, main_area):
         bg="#FFFFFF",
         fg="#294A5A"
     )
+
     title.pack(pady=(25, 20))
 
     form = tk.Frame(
         add_window,
         bg="#FFFFFF"
     )
+
     form.pack(padx=40, fill="x")
 
     # First Name
@@ -261,6 +266,7 @@ def add_staff(window, main_area):
     ).grid(row=0, column=0, sticky="w", pady=5)
 
     first_name = tk.Entry(form)
+
     first_name.grid(
         row=1,
         column=0,
@@ -278,6 +284,7 @@ def add_staff(window, main_area):
     ).grid(row=0, column=1, sticky="w", pady=5)
 
     last_name = tk.Entry(form)
+
     last_name.grid(
         row=1,
         column=1,
@@ -294,6 +301,7 @@ def add_staff(window, main_area):
     ).grid(row=2, column=0, sticky="w", pady=5)
 
     phone = tk.Entry(form)
+
     phone.grid(
         row=3,
         column=0,
@@ -315,6 +323,7 @@ def add_staff(window, main_area):
         values=["Male", "Female"],
         state="readonly"
     )
+
     gender.grid(
         row=3,
         column=1,
@@ -335,6 +344,7 @@ def add_staff(window, main_area):
         values=["Caregiver", "Admin", "Other Staff"],
         state="readonly"
     )
+
     role.grid(
         row=5,
         column=0,
@@ -347,29 +357,40 @@ def add_staff(window, main_area):
 
         first = first_name.get().strip()
         last = last_name.get().strip()
-        staff_gender = gender.get()
+        staff_gender = gender.get().strip()
         staff_phone = phone.get().strip()
-        staff_role = role.get()
+        staff_role = role.get().strip()
 
         if not first or not last or not staff_gender or not staff_phone or not staff_role:
+
             messagebox.showwarning(
                 "Missing Information",
                 "Please fill in all fields."
             )
+
             return
 
         username = f"{first.lower()}.{last.lower()}"
 
-        existing_staff = staff_collection.find_one({
-            "username": username
-        })
+        existing_staff = staff_collection.find_one(
+            {"username": username}
+        )
 
         if existing_staff:
+
             messagebox.showwarning(
                 "Username Exists",
                 "A staff member with this username already exists."
             )
+
             return
+
+        default_password = "Ellisam@123"
+
+        hashed_password = bcrypt.hashpw(
+            default_password.encode("utf-8"),
+            bcrypt.gensalt()
+        ).decode("utf-8")
 
         staff_data = {
             "first_name": first,
@@ -378,21 +399,24 @@ def add_staff(window, main_area):
             "phone": staff_phone,
             "role": staff_role,
             "username": username,
-            "password": "Ellisam@123"
+            "password": hashed_password
         }
 
         staff_collection.insert_one(staff_data)
 
         messagebox.showinfo(
-            "Success",
+            "Staff Added",
             f"Staff added successfully!\n\n"
             f"Username: {username}\n"
-            f"Password: Ellisam@123"
+            f"Default Password: {default_password}"
         )
 
         add_window.destroy()
 
-        staff(main_area, window)
+        staff(
+            main_area,
+            window
+        )
 
     save_button = tk.Button(
         form,
@@ -413,6 +437,7 @@ def add_staff(window, main_area):
         pady=20,
         ipady=8
     )
+
 
 def edit_staff(person, window, main_area):
 
@@ -461,7 +486,7 @@ def edit_staff(person, window, main_area):
 
     first_name.insert(
         0,
-        person["first_name"]
+        person.get("first_name", "")
     )
 
     first_name.grid(
@@ -488,7 +513,7 @@ def edit_staff(person, window, main_area):
 
     last_name.insert(
         0,
-        person["last_name"]
+        person.get("last_name", "")
     )
 
     last_name.grid(
@@ -514,7 +539,7 @@ def edit_staff(person, window, main_area):
 
     phone.insert(
         0,
-        person["phone"]
+        person.get("phone", "")
     )
 
     phone.grid(
@@ -544,7 +569,7 @@ def edit_staff(person, window, main_area):
     )
 
     gender.set(
-        person["gender"]
+        person.get("gender", "")
     )
 
     gender.grid(
@@ -557,10 +582,12 @@ def edit_staff(person, window, main_area):
     def update_staff():
 
         if not first_name.get() or not last_name.get():
+
             messagebox.showwarning(
                 "Missing Information",
                 "Please fill in all fields."
             )
+
             return
 
         staff_collection.update_one(
@@ -613,7 +640,8 @@ def delete_staff(person, main_area, window):
     confirm = messagebox.askyesno(
         "Delete Staff",
         f"Are you sure you want to delete "
-        f"{person['first_name']} {person['last_name']}?"
+        f"{person.get('first_name', '')} "
+        f"{person.get('last_name', '')}?"
     )
 
     if confirm:

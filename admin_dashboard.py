@@ -2,22 +2,13 @@ import tkinter as tk
 from children import children
 from staff import staff
 
-def admin_dashboard(window):
+def admin_dashboard(window, user):
+
     for item in window.winfo_children():
         item.destroy()
 
     window.title("Ellisam Daycare - Admin Dashboard")
     window.configure(bg="#FFFFFF")
-    main_area = tk.Frame(
-    window,
-    bg="#FFFFFF"
-)
-
-    main_area.pack(
-    side="right",
-    fill="both",
-    expand=True
-)
 
     sidebar = tk.Frame(
         window,
@@ -31,6 +22,17 @@ def admin_dashboard(window):
     )
 
     sidebar.pack_propagate(False)
+
+    main_area = tk.Frame(
+        window,
+        bg="#FFFFFF"
+    )
+
+    main_area.pack(
+        side="right",
+        fill="both",
+        expand=True
+    )
 
     brand = tk.Label(
         sidebar,

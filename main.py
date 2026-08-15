@@ -4,25 +4,29 @@ from database import staff_collection
 import bcrypt
 from tkinter import messagebox
 from admin_dashboard import admin_dashboard
+from caregiver_dashboard import caregiver_dashboard
+
 
 # Create the main application window
 window = tk.Tk()
 
 # Window settings
 window.title("Ellisam Daycare Management System")
-window.geometry("1100x700") # width and height
+window.geometry("1100x700")  # width and height
 window.configure(bg="#FFFFFF")
-window.resizable(False, False) # stop it from resizing
+window.resizable(False, False)  # stop it from resizing
+
 
 left_frame = tk.Frame(
-    window, # belongs inside the main window
+    window,  # belongs inside the main window
     bg="#B9E3F5",
     width=520,
     height=700
 )
 
-left_frame.pack(side="left", fill="y") # put to the left and fill vertically
-left_frame.pack_propagate(False) # keep it at the specified width and length
+left_frame.pack(side="left", fill="y")
+left_frame.pack_propagate(False)
+
 
 image = Image.open("daycare.jpg")
 image = image.resize((300, 200))
@@ -36,6 +40,7 @@ image_label = tk.Label(
 
 image_label.pack(pady=20)
 
+
 logo = tk.Label(
     left_frame,
     text="ELLIESAM",
@@ -44,7 +49,8 @@ logo = tk.Label(
     fg="#315A72"
 )
 
-logo.pack(pady=(80, 10)) # vertical spacing above and below
+logo.pack(pady=(80, 10))
+
 
 daycare = tk.Label(
     left_frame,
@@ -53,7 +59,9 @@ daycare = tk.Label(
     bg="#B9E3F5",
     fg="#315A72"
 )
+
 daycare.pack(pady=(0, 50))
+
 
 welcome = tk.Label(
     left_frame,
@@ -63,7 +71,9 @@ welcome = tk.Label(
     fg="#315A72",
     justify="center"
 )
+
 welcome.pack(pady=(0, 20))
+
 
 description = tk.Label(
     left_frame,
@@ -75,7 +85,9 @@ description = tk.Label(
     fg="#294A5A",
     justify="center"
 )
+
 description.pack(pady=(0, 30))
+
 
 features = tk.Label(
     left_frame,
@@ -87,6 +99,7 @@ features = tk.Label(
 
 features.pack(pady=(0, 20))
 
+
 right_frame = tk.Frame(
     window,
     bg="#FFFFFF",
@@ -97,6 +110,7 @@ right_frame = tk.Frame(
 right_frame.pack(side="right", fill="both", expand=True)
 right_frame.pack_propagate(False)
 
+
 small_welcome = tk.Label(
     right_frame,
     text="WELCOME BACK",
@@ -106,7 +120,7 @@ small_welcome = tk.Label(
 )
 
 small_welcome.pack(
-    anchor="w", # west or left.
+    anchor="w",
     padx=90,
     pady=(90, 8)
 )
@@ -160,12 +174,12 @@ username_entry = tk.Entry(
     font=("Arial", 12),
     bg="#EAF7FC",
     fg="#294A5A",
-    relief="flat", # border style
-    bd=0  # border width
+    relief="flat",
+    bd=0
 )
 
 username_entry.pack(
-    fill="x", # Stretch the entry box horizontally.
+    fill="x",
     padx=90,
     pady=(8, 20),
     ipady=12
@@ -219,39 +233,108 @@ forgot_password.pack(
     pady=(0, 25)
 )
 
+
 def login():
-    username = username_entry.get()
+
+    username = username_entry.get().strip()
     password = password_entry.get()
 
-    user = staff_collection.find_one({"username": username})
+    if not username or not password:
 
-    if user is None:
-        messagebox.showerror(
-            "Login Failed",
-            "Invalid username or password."
+        messagebox.showwarning(
+            "Missing Information",
+            "Please enter your username and password."
         )
+
         return
 
-    if bcrypt.checkpw(
-        password.encode("utf-8"),
-        user["password"]
-    ):
-        if user["role"] == "admin":
-            messagebox.showinfo(
-                "Login Successful",
-                "Welcome, Admin!"
-            )
-            admin_dashboard(window)
-        else:
-            messagebox.showerror(
-                "Login Failed",
-                "Invalid role."
-            )
-    else:
+
+    user = staff_collection.find_one({
+        "username": username
+    })
+
+
+    if user is None:
+
         messagebox.showerror(
             "Login Failed",
             "Invalid username or password."
         )
+
+        return
+
+
+    stored_password = user.get("password")
+
+
+    if stored_password is None:
+
+        messagebox.showerror(
+            "Login Failed",
+            "This account does not have a password."
+        )
+
+        return
+
+
+    # MongoDB may return the bcrypt password as bytes
+    # or as a string depending on how it was stored.
+
+    if isinstance(stored_password, str):
+
+        stored_password = stored_password.encode("utf-8")
+
+
+    try:
+
+        password_valid = bcrypt.checkpw(
+            password.encode("utf-8"),
+            stored_password
+        )
+
+    except (ValueError, TypeError):
+
+        messagebox.showerror(
+            "Login Failed",
+            "The password stored for this account is invalid."
+        )
+
+        return
+
+
+    if not password_valid:
+
+        messagebox.showerror(
+            "Login Failed",
+            "Invalid username or password."
+        )
+
+        return
+
+
+    role = user.get("role", "")
+
+
+    # Caregiver
+    if role == "Caregiver":
+
+        caregiver_dashboard(window)
+
+
+    # Admin
+    elif role == "Admin":
+
+        admin_dashboard(window)
+
+
+    # Other roles
+    else:
+
+        messagebox.showerror(
+            "Login Failed",
+            "Your account does not have a valid role."
+        )
+
 
 login_button = tk.Button(
     right_frame,
@@ -286,6 +369,7 @@ footer.pack(
     side="bottom",
     pady=35
 )
+
 
 # Keep the application running
 window.mainloop()
