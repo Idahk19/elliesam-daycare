@@ -232,9 +232,8 @@ def display_staff(staff_frame, main_area, window):
 def add_staff(window, main_area):
 
     add_window = tk.Toplevel(window)
-
     add_window.title("Add Staff")
-    add_window.geometry("500x400")
+    add_window.geometry("500x500")
     add_window.configure(bg="#FFFFFF")
     add_window.resizable(False, False)
 
@@ -245,35 +244,23 @@ def add_staff(window, main_area):
         bg="#FFFFFF",
         fg="#294A5A"
     )
-
-    title.pack(
-        pady=(25, 20)
-    )
+    title.pack(pady=(25, 20))
 
     form = tk.Frame(
         add_window,
         bg="#FFFFFF"
     )
+    form.pack(padx=40, fill="x")
 
-    form.pack(
-        padx=40,
-        fill="x"
-    )
-
+    # First Name
     tk.Label(
         form,
         text="First Name",
         bg="#FFFFFF",
         fg="#294A5A"
-    ).grid(
-        row=0,
-        column=0,
-        sticky="w",
-        pady=5
-    )
+    ).grid(row=0, column=0, sticky="w", pady=5)
 
     first_name = tk.Entry(form)
-
     first_name.grid(
         row=1,
         column=0,
@@ -282,20 +269,15 @@ def add_staff(window, main_area):
         ipady=5
     )
 
+    # Last Name
     tk.Label(
         form,
         text="Last Name",
         bg="#FFFFFF",
         fg="#294A5A"
-    ).grid(
-        row=0,
-        column=1,
-        sticky="w",
-        pady=5
-    )
+    ).grid(row=0, column=1, sticky="w", pady=5)
 
     last_name = tk.Entry(form)
-
     last_name.grid(
         row=1,
         column=1,
@@ -303,20 +285,15 @@ def add_staff(window, main_area):
         ipady=5
     )
 
+    # Phone
     tk.Label(
         form,
         text="Phone Number",
         bg="#FFFFFF",
         fg="#294A5A"
-    ).grid(
-        row=2,
-        column=0,
-        sticky="w",
-        pady=5
-    )
+    ).grid(row=2, column=0, sticky="w", pady=5)
 
     phone = tk.Entry(form)
-
     phone.grid(
         row=3,
         column=0,
@@ -325,24 +302,19 @@ def add_staff(window, main_area):
         ipady=5
     )
 
+    # Gender
     tk.Label(
         form,
         text="Gender",
         bg="#FFFFFF",
         fg="#294A5A"
-    ).grid(
-        row=2,
-        column=1,
-        sticky="w",
-        pady=5
-    )
+    ).grid(row=2, column=1, sticky="w", pady=5)
 
     gender = ttk.Combobox(
         form,
         values=["Male", "Female"],
         state="readonly"
     )
-
     gender.grid(
         row=3,
         column=1,
@@ -350,44 +322,77 @@ def add_staff(window, main_area):
         ipady=3
     )
 
+    # Role
+    tk.Label(
+        form,
+        text="Role",
+        bg="#FFFFFF",
+        fg="#294A5A"
+    ).grid(row=4, column=0, sticky="w", pady=5)
+
+    role = ttk.Combobox(
+        form,
+        values=["Caregiver", "Admin", "Other Staff"],
+        state="readonly"
+    )
+    role.grid(
+        row=5,
+        column=0,
+        padx=(0, 10),
+        pady=(0, 15),
+        ipady=3
+    )
+
     def save_staff():
 
-        first = first_name.get()
-        last = last_name.get()
+        first = first_name.get().strip()
+        last = last_name.get().strip()
         staff_gender = gender.get()
-        staff_phone = phone.get()
+        staff_phone = phone.get().strip()
+        staff_role = role.get()
 
-        if not first or not last or not staff_gender or not staff_phone:
-
+        if not first or not last or not staff_gender or not staff_phone or not staff_role:
             messagebox.showwarning(
                 "Missing Information",
                 "Please fill in all fields."
             )
+            return
 
+        username = f"{first.lower()}.{last.lower()}"
+
+        existing_staff = staff_collection.find_one({
+            "username": username
+        })
+
+        if existing_staff:
+            messagebox.showwarning(
+                "Username Exists",
+                "A staff member with this username already exists."
+            )
             return
 
         staff_data = {
             "first_name": first,
             "last_name": last,
             "gender": staff_gender,
-            "phone": staff_phone
+            "phone": staff_phone,
+            "role": staff_role,
+            "username": username,
+            "password": "Ellisam@123"
         }
 
-        staff_collection.insert_one(
-            staff_data
-        )
+        staff_collection.insert_one(staff_data)
 
         messagebox.showinfo(
             "Success",
-            "Staff added successfully!"
+            f"Staff added successfully!\n\n"
+            f"Username: {username}\n"
+            f"Password: Ellisam@123"
         )
 
         add_window.destroy()
 
-        staff(
-            main_area,
-            window
-        )
+        staff(main_area, window)
 
     save_button = tk.Button(
         form,
@@ -401,14 +406,13 @@ def add_staff(window, main_area):
     )
 
     save_button.grid(
-        row=4,
+        row=6,
         column=0,
         columnspan=2,
         sticky="ew",
         pady=20,
         ipady=8
     )
-
 
 def edit_staff(person, window, main_area):
 
