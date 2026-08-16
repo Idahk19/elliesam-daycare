@@ -301,9 +301,10 @@ def login_screen():
         elif role == "admin":
 
             admin_dashboard(
-                window,
-                login_screen
-            )
+    window,
+    user,
+    login_screen
+)
 
         else:
 
