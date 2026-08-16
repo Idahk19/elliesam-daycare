@@ -2,9 +2,10 @@ import tkinter as tk
 from children import children
 from attendance import attendance
 from activities import activities
+from tkinter import messagebox
 
 
-def caregiver_dashboard(window):
+def caregiver_dashboard(window, login_screen):
 
     for item in window.winfo_children():
         item.destroy()
@@ -130,7 +131,8 @@ def caregiver_dashboard(window):
         bd=0,
         anchor="w",
         padx=25,
-        cursor="hand2"
+        cursor="hand2",
+        command=login_screen
     )
 
     logout_button.pack(
