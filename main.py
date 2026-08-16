@@ -322,7 +322,7 @@ def login():
 
 
     # Admin
-    elif role == "Admin":
+    elif role == "admin":
 
         admin_dashboard(window)
 

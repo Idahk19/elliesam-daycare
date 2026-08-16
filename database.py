@@ -12,6 +12,7 @@ db = client["elliesam_daycare"]
 
 staff_collection = db["staff"]
 children_collection = db["children"]
+attendance_collection = db["attendance"]
 
 # testing
 try:

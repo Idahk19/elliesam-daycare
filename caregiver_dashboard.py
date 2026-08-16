@@ -1,5 +1,6 @@
 import tkinter as tk
 from children import children
+from attendance import attendance
 
 
 def caregiver_dashboard(window):
@@ -88,7 +89,8 @@ def caregiver_dashboard(window):
         bd=0,
         anchor="w",
         padx=25,
-        cursor="hand2"
+        cursor="hand2",
+        command=lambda: attendance(main_area, window)
     )
 
     attendance_button.pack(
