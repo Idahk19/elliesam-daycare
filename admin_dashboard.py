@@ -2,6 +2,7 @@ import tkinter as tk
 from children import children
 from staff import staff
 from admin_attendance import admin_attendance
+from admin_activities import admin_activities
 
 def admin_dashboard(window, user):
 
@@ -134,9 +135,9 @@ def admin_dashboard(window, user):
         pady=5
     )
 
-    payments_button = tk.Button(
-        sidebar,
-        text="Payments",
+    activities_button = tk.Button(
+    sidebar,
+        text="Activities",
         font=("Arial", 11),
         bg="#B9E3F5",
         fg="#294A5A",
@@ -144,10 +145,11 @@ def admin_dashboard(window, user):
         bd=0,
         anchor="w",
         padx=25,
-        cursor="hand2"
+        cursor="hand2",
+        command=lambda: admin_activities(main_area, window)
     )
 
-    payments_button.pack(
+    activities_button.pack(
         fill="x",
         padx=15,
         pady=5
