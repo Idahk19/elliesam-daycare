@@ -1,6 +1,7 @@
 import tkinter as tk
 from children import children
 from staff import staff
+from admin_attendance import admin_attendance
 
 def admin_dashboard(window, user):
 
@@ -123,7 +124,8 @@ def admin_dashboard(window, user):
         bd=0,
         anchor="w",
         padx=25,
-        cursor="hand2"
+        cursor="hand2",
+        command=lambda: admin_attendance(main_area, window)
     )
 
     attendance_button.pack(
@@ -169,17 +171,6 @@ def admin_dashboard(window, user):
         fill="x",
         padx=15,
         pady=25
-    )
-
-    main_area = tk.Frame(
-        window,
-        bg="#FFFFFF"
-    )
-
-    main_area.pack(
-        side="right",
-        fill="both",
-        expand=True
     )
 
     welcome = tk.Label(

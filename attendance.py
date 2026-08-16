@@ -14,17 +14,12 @@ def attendance(main_area, window):
 
     title = tk.Label(
         main_area,
-        text="Attendance",
+        text="Attendance & Payments",
         font=("Arial", 24, "bold"),
         bg="#FFFFFF",
         fg="#294A5A"
     )
-
-    title.pack(
-        anchor="w",
-        padx=45,
-        pady=(40, 5)
-    )
+    title.pack(anchor="w", padx=45, pady=(40, 5))
 
     today = date.today().strftime("%d/%m/%Y")
 
@@ -35,18 +30,12 @@ def attendance(main_area, window):
         bg="#FFFFFF",
         fg="#6F8A96"
     )
-
-    subtitle.pack(
-        anchor="w",
-        padx=45,
-        pady=(0, 25)
-    )
+    subtitle.pack(anchor="w", padx=45, pady=(0, 25))
 
     attendance_frame = tk.Frame(
         main_area,
         bg="#FFFFFF"
     )
-
     attendance_frame.pack(
         fill="x",
         padx=45
@@ -55,6 +44,7 @@ def attendance(main_area, window):
     headers = [
         "Child",
         "Attendance",
+        "Expected Fee",
         "Amount Paid"
     ]
 
@@ -76,7 +66,7 @@ def attendance(main_area, window):
 
     attendance_data = []
 
-    children = children_collection.find()
+    children = list(children_collection.find())
 
     for row, child in enumerate(children, start=1):
 
@@ -119,7 +109,7 @@ def attendance(main_area, window):
             pady=8
         )
 
-        amount_entry = tk.Entry(
+        expected_fee = tk.Entry(
             attendance_frame,
             font=("Arial", 10),
             bg="#EAF7FC",
@@ -128,9 +118,9 @@ def attendance(main_area, window):
             bd=0
         )
 
-        amount_entry.insert(0, "0")
+        expected_fee.insert(0, "500")
 
-        amount_entry.grid(
+        expected_fee.grid(
             row=row,
             column=2,
             padx=10,
@@ -138,28 +128,36 @@ def attendance(main_area, window):
             ipady=5
         )
 
-        attendance_data.append(
-            {
-                "child": child,
-                "status": attendance_status,
-                "amount": amount_entry
-            }
+        amount_paid = tk.Entry(
+            attendance_frame,
+            font=("Arial", 10),
+            bg="#EAF7FC",
+            fg="#294A5A",
+            relief="flat",
+            bd=0
         )
 
-    attendance_frame.grid_columnconfigure(
-        0,
-        weight=2
-    )
+        amount_paid.insert(0, "0")
 
-    attendance_frame.grid_columnconfigure(
-        1,
-        weight=1
-    )
+        amount_paid.grid(
+            row=row,
+            column=3,
+            padx=10,
+            pady=8,
+            ipady=5
+        )
 
-    attendance_frame.grid_columnconfigure(
-        2,
-        weight=1
-    )
+        attendance_data.append({
+            "child": child,
+            "status": attendance_status,
+            "expected_fee": expected_fee,
+            "amount_paid": amount_paid
+        })
+
+    attendance_frame.grid_columnconfigure(0, weight=2)
+    attendance_frame.grid_columnconfigure(1, weight=1)
+    attendance_frame.grid_columnconfigure(2, weight=1)
+    attendance_frame.grid_columnconfigure(3, weight=1)
 
     def save_attendance():
 
@@ -171,18 +169,23 @@ def attendance(main_area, window):
 
             status = item["status"].get()
 
-            amount = item["amount"].get().strip()
+            expected_fee = item["expected_fee"].get().strip()
+            amount_paid = item["amount_paid"].get().strip()
 
-            if not amount:
-                amount = "0"
+            if not expected_fee:
+                expected_fee = "0"
+
+            if not amount_paid:
+                amount_paid = "0"
 
             try:
-                amount = float(amount)
+                expected_fee = float(expected_fee)
+                amount_paid = float(amount_paid)
 
-                if amount < 0:
+                if expected_fee < 0 or amount_paid < 0:
                     messagebox.showwarning(
                         "Invalid Amount",
-                        "Amount paid cannot be negative."
+                        "Amounts cannot be negative."
                     )
                     return
 
@@ -190,17 +193,19 @@ def attendance(main_area, window):
 
                 messagebox.showwarning(
                     "Invalid Amount",
-                    "Please enter a valid amount."
+                    "Please enter valid amounts."
                 )
-
                 return
 
-            existing_record = attendance_collection.find_one(
-                {
-                    "child_id": child["_id"],
-                    "date": today_date
-                }
-            )
+            child_name = (
+                f"{child.get('first_name', '')} "
+                f"{child.get('last_name', '')}"
+            ).strip()
+
+            existing_record = attendance_collection.find_one({
+                "child_id": child["_id"],
+                "date": today_date
+            })
 
             if existing_record:
 
@@ -211,35 +216,29 @@ def attendance(main_area, window):
                     {
                         "$set": {
                             "attendance": status,
-                            "amount_paid": amount
+                            "expected_fee": expected_fee,
+                            "amount_paid": amount_paid
                         }
                     }
                 )
 
             else:
 
-                attendance_collection.insert_one(
-                    {
-                        "child_id": child["_id"],
-                        "child_name": (
-                            f"{child.get('first_name', '')} "
-                            f"{child.get('last_name', '')}"
-                        ).strip(),
-                        "date": today_date,
-                        "attendance": status,
-                        "amount_paid": amount
-                    }
-                )
+                attendance_collection.insert_one({
+                    "child_id": child["_id"],
+                    "child_name": child_name,
+                    "date": today_date,
+                    "attendance": status,
+                    "expected_fee": expected_fee,
+                    "amount_paid": amount_paid
+                })
 
         messagebox.showinfo(
             "Success",
-            "Attendance saved successfully!"
+            "Attendance and payment information saved successfully!"
         )
 
-        attendance(
-            main_area,
-            window
-        )
+        attendance(main_area, window)
 
     save_button = tk.Button(
         main_area,
@@ -274,21 +273,68 @@ def attendance(main_area, window):
         pady=(15, 10)
     )
 
-    history_frame = tk.Frame(
+    history_container = tk.Frame(
         main_area,
         bg="#FFFFFF"
     )
 
-    history_frame.pack(
+    history_container.pack(
         fill="both",
         expand=True,
-        padx=45
+        padx=45,
+        pady=(0, 20)
+    )
+
+    canvas = tk.Canvas(
+        history_container,
+        bg="#FFFFFF",
+        highlightthickness=0
+    )
+
+    scrollbar = tk.Scrollbar(
+        history_container,
+        orient="vertical",
+        command=canvas.yview
+    )
+
+    history_frame = tk.Frame(
+        canvas,
+        bg="#FFFFFF"
+    )
+
+    history_frame.bind(
+        "<Configure>",
+        lambda event: canvas.configure(
+            scrollregion=canvas.bbox("all")
+        )
+    )
+
+    canvas.create_window(
+        (0, 0),
+        window=history_frame,
+        anchor="nw"
+    )
+
+    canvas.configure(
+        yscrollcommand=scrollbar.set
+    )
+
+    canvas.pack(
+        side="left",
+        fill="both",
+        expand=True
+    )
+
+    scrollbar.pack(
+        side="right",
+        fill="y"
     )
 
     history_headers = [
         "Date",
         "Child",
         "Attendance",
+        "Expected Fee",
         "Amount Paid"
     ]
 
@@ -308,64 +354,40 @@ def attendance(main_area, window):
             sticky="ew"
         )
 
-    for row, record in enumerate(
-        attendance_collection.find().sort("date", -1),
-        start=1
-    ):
+    records = attendance_collection.find().sort(
+        "date",
+        -1
+    )
 
-        tk.Label(
-            history_frame,
-            text=record.get("date", ""),
-            bg="#EAF7FC",
-            fg="#294A5A",
-            padx=15,
-            pady=8
-        ).grid(
-            row=row,
-            column=0,
-            sticky="ew"
-        )
+    for row, record in enumerate(records, start=1):
 
-        tk.Label(
-            history_frame,
-            text=record.get("child_name", ""),
-            bg="#EAF7FC",
-            fg="#294A5A",
-            padx=15,
-            pady=8
-        ).grid(
-            row=row,
-            column=1,
-            sticky="ew"
-        )
+        values = [
+            record.get("date", ""),
+            record.get("child_name", ""),
+            record.get("attendance", ""),
+            f"KSh {record.get('expected_fee', 0)}",
+            f"KSh {record.get('amount_paid', 0)}"
+        ]
 
-        tk.Label(
-            history_frame,
-            text=record.get("attendance", ""),
-            bg="#EAF7FC",
-            fg="#294A5A",
-            padx=15,
-            pady=8
-        ).grid(
-            row=row,
-            column=2,
-            sticky="ew"
-        )
+        for column, value in enumerate(values):
 
-        tk.Label(
-            history_frame,
-            text=f"KSh {record.get('amount_paid', 0)}",
-            bg="#EAF7FC",
-            fg="#294A5A",
-            padx=15,
-            pady=8
-        ).grid(
-            row=row,
-            column=3,
-            sticky="ew"
-        )
+            tk.Label(
+                history_frame,
+                text=value,
+                font=("Arial", 9),
+                bg="#EAF7FC",
+                fg="#294A5A",
+                padx=15,
+                pady=8,
+                anchor="w"
+            ).grid(
+                row=row,
+                column=column,
+                sticky="ew"
+            )
 
     history_frame.grid_columnconfigure(0, weight=1)
     history_frame.grid_columnconfigure(1, weight=2)
     history_frame.grid_columnconfigure(2, weight=1)
     history_frame.grid_columnconfigure(3, weight=1)
+    history_frame.grid_columnconfigure(4, weight=1)
